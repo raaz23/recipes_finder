@@ -4,6 +4,9 @@ import cors from "cors";
 import 'dotenv/config';  // Import dotenv as a side effect
 import path from "path";
 import { fileURLToPath } from 'url';
+import cookieParser from "cookie-parser";
+
+import userRouter from "./routers/userRouter.js";
 
 // Get __dirname equivalent in ES module scope
 const __filename = fileURLToPath(import.meta.url);
@@ -13,25 +16,33 @@ const app = express();
 
 // Middleware
 app.use(cors());
-app.use(express.json()); // Use express's built-in body-parser
+app.use(express.json()); 
+app.use(cookieParser());
 
 // Database connection
-mongoose.connect("mongodb+srv://receipy:receipy@cluster0.ttbptc5.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0/receipy_finder", {
+mongoose.connect(process.env.MONGO_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  dbName: "receipy"
 }).then(() => {
   console.log("DB connected");
 }).catch((err) => {
   console.log("DB connection failed", err.message);
 });
 
-// Routes
-app.get("/*", async (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+// Router handling
+app.use('/api', userRouter); 
+
+// Static file serving
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Fallback route
+app.get("*", (req, res) => {
+  res.status(200).json({message:"route not found"});
 });
 
 // Start the server
-const port = 3002;
+const port = 3000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
