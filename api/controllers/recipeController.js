@@ -83,7 +83,7 @@ export const savedRecipeById = async (req,res) =>{
 
   recipe = await SavedRecipe.create({recipe:id})
   
-  res.json({message:"Recipe saved Successfully..!"})
+  res.json({message:"Recipe saved Successfully..!"});
 }
 
 

@@ -7,6 +7,7 @@ router.post("/add", createRecipe);
 router.get("/all", getAllRecipes);
 router.get("/:id", getRecipeById);
 router.delete("/:id", verifyJWT,deleteRecipeById);
+router
 
 
 export default router;
