@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import cookieParser from "cookie-parser";
 
 import userRouter from "./routers/userRouter.js";
+import recipeRouter from "./routers/recipeRouter.js";
 
 // Get __dirname equivalent in ES module scope
 const __filename = fileURLToPath(import.meta.url);
@@ -32,6 +33,7 @@ mongoose.connect(process.env.MONGO_URL, {
 
 // Router handling
 app.use('/api', userRouter); 
+app.use('/api', recipeRouter);
 
 // Static file serving
 app.use(express.static(path.join(__dirname, 'public')));
