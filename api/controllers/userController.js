@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import userModel from "../models/userModel.js";
 import jwt from "jsonwebtoken";
-
+import errorHandler from "../utils/error.js";
 export const userSignUp = async (req, res) => {
     const { name, password, email } = req.body;
     console.log(req.body);
@@ -56,6 +56,17 @@ export const userSignIn = async (req, res) => {
     } catch (err) {
       console.log(err);
       res.status(500).json({ msg: "Internal server error" });
+    }
+}
+export const profile=async (req,res,next)=>{
+  const user_ka_id=req.user.id;
+    try{
+    const userProfile=await userModel.findById(user_ka_id);
+
+     res.status(201).json({user:userProfile});
+    }
+    catch(err){
+      res.json({message:err.message});
     }
 }
 

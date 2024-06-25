@@ -1,4 +1,5 @@
 import recipeModel from "../models/receipyModel.js";
+import savedRecipeModel from "../models/savedRecipeModel.js";
 
 
 // Create a new recipe
@@ -18,7 +19,7 @@ export const createRecipe = async (req, res) => {
       ing3,
       ing4,
       imgUrl,
-      user,
+      user:req.user,
     });
 
     await newRecipe.save();
@@ -61,6 +62,10 @@ export const getRecipeById = async (req, res) => {
 export const deleteRecipeById = async (req, res) => {
   const  id  = req.params.id;
 
+  if (req.user.id !== req.params.id) {
+    return next(errorHandler(401, 'You can update only your account!'));
+  }
+
   try {
     const deletedRecipe = await recipeModel.findByIdAndDelete(id);
     if (!deletedRecipe) {
@@ -77,13 +82,19 @@ export const deleteRecipeById = async (req, res) => {
 export const savedRecipeById = async (req,res) =>{
   const id = req.params.id
 
-  let recipe = await SavedRecipe.findOne({recipe:id})
+  let recipe = await savedRecipeModel.findOne({recipe:id})
 
   if(recipe) return res.json({message:"recipe already saved"})
 
-  recipe = await SavedRecipe.create({recipe:id})
+  recipe = await savedRecipeModel.create({recipe:id})
   
   res.json({message:"Recipe saved Successfully..!"});
 }
 
+
+export const getAllSavedRecipe = async (req, res) => {
+  const recipe = await savedRecipeModel.find();
+  if(!recipe) res.status(402).json({status:0, message:"not found any recipe"});
+  res.status(201).json({status:1, message:"successfully fetched saved recipe", recipe});
+  }
 

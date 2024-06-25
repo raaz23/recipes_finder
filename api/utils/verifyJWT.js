@@ -6,12 +6,13 @@ const verifyJWT=async(req,res,next)=>{
         return res.status(401).json({msg:"Unauthorized"});
     }
     try{
-        const decoded=jwt.verify(token,"receiyfoodmernStack12345",(err,user)=>{
+        jwt.verify(token,"receiyfoodmernStack12345",(err,user)=>{
             if(err){
                 return res.status(401).json({msg:"Unauthorized"});
             }
 
             req.user=user;
+
             next();
         });
     }
