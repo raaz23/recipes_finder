@@ -34,23 +34,22 @@ const NavBar = () => {
 
         {user && (
           <>
+          <NavLink
+              to="/add"
+             className="btn btn-outline-warning mx-2">
+              Add
+            </NavLink>
+
             <NavLink to="/saved" className="btn btn-outline-success mx-2">
               Saved Recipes
             </NavLink>
-
-            <Link
-              to="/add"
-              className="btn mx-2 text-yellow-500 hover:bg-yellow-500 hover:text-white border-2 border-yellow-300"
-            >
-              Add
-            </Link>
 
             <NavLink to="/profile" className="btn btn-outline-primary mx-2">
               Profile
             </NavLink>
 
             <NavLink
-              className="btn btn-outline-danger mx-2"
+              className="btn btn-outline-danger hover:bg-red-900 mx-2"
               onClick={handleLogOut}
             >
               Logout

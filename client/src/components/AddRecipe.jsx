@@ -1,9 +1,17 @@
 import axios from "axios";
-import { useState } from "react";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { useRef, useState } from "react";
 import toastify from "../toast/toastify";
+import { useNavigate } from "react-router";
+import { ToastContainer } from "react-toastify";
 
 const AddRecipe = () => {
-  const [formData, setFromData] = useState({
+  const inputImage=useRef('');
+  const navigate = useNavigate();
+  const [image, setImage] = useState(null);
+  const [imageURL, setImageURL] = useState("");
+
+  const [formData, setFormData] = useState({
     title: "",
     inst: "",
     qty1: "",
@@ -18,48 +26,77 @@ const AddRecipe = () => {
   });
 
   const handleChange = (e) => {
-     setFromData({ ...formData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-  console.log(formData);
 
-const handleSubmit=async ()=>{
-try{
-  const response=  await  axios.post("http://localhost:3000/api/addRecipe",{
-        formData
-  },{
-    headers: {
-      "Content-Type": "application/json",
-    },
-    withCredentials: true 
-  }
-) 
-if(response){
-  console.log(response.data);
-  toastify("add recipe successfully");
-  toastify(response.data.message);
-}
-}
-catch(err){
-  console.log(err);
-  toastify("error in adding recipe");
-}
-}
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post("http://localhost:3000/api/add", formData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
+
+      if (response.data) {
+        console.log(response.data);
+        setTimeout(()=>{
+          navigate("/");
+        },1500)
+        toastify(response.data.message);
+        setFormData({
+          title: "",
+          inst: "",
+          qty1: "",
+          qty2: "",
+          qty3: "",
+          qty4: "",
+          ing1: "",
+          ing2: "",
+          ing3: "",
+          ing4: "",
+          imgUrl: "",
+        });
+      }
+    } catch (err) {
+      console.log(err);
+      toastify("Error in adding recipe");
+    }
+  };
+
+
+  const handleImageChange = (e) => {
+    if (e.target.files[0]) {
+      setImage(e.target.files[0]);
+    }
+  };
+  const handleUpload = async () => {
+    if (image) {
+      const storage = getStorage();
+      const storageRef = ref(storage, `images/${image.name}`);
+      await uploadBytes(storageRef, image);
+      const url = await getDownloadURL(storageRef);
+      setImageURL(url);
+    }
+  };
 
   return (
+    
     <div
-      className="mx-auto my-6 p-5"
+      className="mx-auto my-6 p-5 "
       style={{
         maxWidth: "42rem",
         border: "2px solid yellow",
         borderRadius: "10px",
       }}
-    >
-      <h1 className="text-3xl sm:xl text-center mt-2 underline p-8">
-        Add Recipe
-      </h1>
+    > <ToastContainer/>
+      <h1 className="text-3xl sm:xl text-center mt-2 underline p-8">Add Recipe</h1>
 
       <div className="w-full h-1 bg-white mt-1 mb-2"></div>
-      <form  onSubmit={handleSubmit}
+      <form
+        onSubmit={handleSubmit}
         className="p-3"
         style={{
           overflowY: "auto",
@@ -72,9 +109,7 @@ catch(err){
         }}
       >
         <div className="mb-3 mt-8">
-          <label htmlFor="title" className="form-label">
-            Title
-          </label>
+          <label htmlFor="title" className="form-label">Title</label>
           <input
             type="text"
             className="form-control"
@@ -87,9 +122,7 @@ catch(err){
         </div>
 
         <div className="mb-3">
-          <label htmlFor="inst" className="form-label">
-            Instructions
-          </label>
+          <label htmlFor="inst" className="form-label">Instructions</label>
           <input
             type="text"
             className="form-control"
@@ -102,9 +135,7 @@ catch(err){
         </div>
 
         <div className="mb-3">
-          <label htmlFor="qty1" className="form-label">
-            Quantity 1
-          </label>
+          <label htmlFor="qty1" className="form-label">Quantity 1</label>
           <input
             type="text"
             className="form-control"
@@ -117,9 +148,7 @@ catch(err){
         </div>
 
         <div className="mb-3">
-          <label htmlFor="qty1" className="form-label">
-            Quantity 2
-          </label>
+          <label htmlFor="qty2" className="form-label">Quantity 2</label>
           <input
             type="text"
             className="form-control"
@@ -132,9 +161,7 @@ catch(err){
         </div>
 
         <div className="mb-3">
-          <label htmlFor="qty3" className="form-label">
-            Quantity 3
-          </label>
+          <label htmlFor="qty3" className="form-label">Quantity 3</label>
           <input
             type="text"
             className="form-control"
@@ -147,9 +174,7 @@ catch(err){
         </div>
 
         <div className="mb-3">
-          <label htmlFor="qty4" className="form-label">
-            Quantity 4
-          </label>
+          <label htmlFor="qty4" className="form-label">Quantity 4</label>
           <input
             type="text"
             className="form-control"
@@ -162,9 +187,7 @@ catch(err){
         </div>
 
         <div className="mb-3">
-          <label htmlFor="ing1" className="form-label">
-            Ingredient 1
-          </label>
+          <label htmlFor="ing1" className="form-label">Ingredient 1</label>
           <input
             type="text"
             className="form-control"
@@ -177,9 +200,7 @@ catch(err){
         </div>
 
         <div className="mb-3">
-          <label htmlFor="ing2" className="form-label">
-            Ingredient 2
-          </label>
+          <label htmlFor="ing2" className="form-label">Ingredient 2</label>
           <input
             type="text"
             className="form-control"
@@ -192,9 +213,7 @@ catch(err){
         </div>
 
         <div className="mb-3">
-          <label htmlFor="ing3" className="form-label">
-            Ingredient 3
-          </label>
+          <label htmlFor="ing3" className="form-label">Ingredient 3</label>
           <input
             type="text"
             className="form-control"
@@ -207,9 +226,7 @@ catch(err){
         </div>
 
         <div className="mb-3">
-          <label htmlFor="ing4" className="form-label">
-            Ingredient 4
-          </label>
+          <label htmlFor="ing4" className="form-label">Ingredient 4</label>
           <input
             type="text"
             className="form-control"
@@ -222,17 +239,17 @@ catch(err){
         </div>
 
         <div className="mb-3">
-          <label htmlFor="imgUrl" className="form-label">
-            Image URL
-          </label>
+          <label htmlFor="imgUrl" className="form-label">Image URL</label>
           <input
-            type="text"
+            type="file"
             className="form-control"
             id="imgUrl"
             name="imgUrl"
-            value={formData.imgUrl}
-            onChange={handleChange} required
+            value={image}
+            onChange={handleImageChange}
+            style={{display:"hidden"}}
           />
+          <img src="" alt="" ref={inputRef} />
         </div>
 
         <div className="w-full h-12 flex justify-center items-center mt-5">
