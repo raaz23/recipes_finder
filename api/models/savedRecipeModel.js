@@ -1,7 +1,7 @@
 import mongoose, { modelNames } from "mongoose";
 
 const savedRecipeSchema = new mongoose.Schema({
-    recipe:{
+    saveRecipeId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'recipe',
     }

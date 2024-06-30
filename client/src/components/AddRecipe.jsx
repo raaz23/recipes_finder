@@ -1,16 +1,19 @@
 import axios from "axios";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { useRef, useState } from "react";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { useRef, useState, useEffect } from "react";
 import toastify from "../toast/toastify";
 import { useNavigate } from "react-router";
 import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import the CSS for Toastify
+import {storage} from "../utils/firebase.js";
 
 const AddRecipe = () => {
-  const inputImage=useRef('');
   const navigate = useNavigate();
+  const fileRef = useRef();
+  
   const [image, setImage] = useState(null);
-  const [imageURL, setImageURL] = useState("");
-
+  const [progress, setProgress] = useState(0);
+  const [imageError, setImageError] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
     inst: "",
@@ -24,6 +27,34 @@ const AddRecipe = () => {
     ing4: "",
     imgUrl: "",
   });
+
+  useEffect(() => {
+    if (image) {
+      handleImageUpload(image);
+    }
+  }, [image]);
+
+  const handleImageUpload = async (Image) => {
+    const fileName = new Date().getTime() + Image.name;
+    const storageRef = ref(storage, fileName);
+    const uploadTask =  uploadBytesResumable(storageRef, Image);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =  (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setProgress(Math.round(progress));
+      },
+      (error) => {
+        setImageError(error.message);
+      },
+     async () => {
+       await getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setFormData((prevData) => ({ ...prevData, imgUrl: downloadURL }));
+        });
+      }
+    );
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -41,11 +72,10 @@ const AddRecipe = () => {
       });
 
       if (response.data) {
-        console.log(response.data);
-        setTimeout(()=>{
-          navigate("/");
-        },1500)
         toastify(response.data.message);
+        setTimeout(() => {
+          navigate("/");
+        }, 1500);
         setFormData({
           title: "",
           inst: "",
@@ -61,39 +91,28 @@ const AddRecipe = () => {
         });
       }
     } catch (err) {
-      console.log(err);
+     // console.log(err);
       toastify("Error in adding recipe");
     }
   };
-
 
   const handleImageChange = (e) => {
     if (e.target.files[0]) {
       setImage(e.target.files[0]);
     }
   };
-  const handleUpload = async () => {
-    if (image) {
-      const storage = getStorage();
-      const storageRef = ref(storage, `images/${image.name}`);
-      await uploadBytes(storageRef, image);
-      const url = await getDownloadURL(storageRef);
-      setImageURL(url);
-    }
-  };
 
   return (
-    
     <div
-      className="mx-auto my-6 p-5 "
+      className="mx-auto my-6 p-5"
       style={{
         maxWidth: "42rem",
         border: "2px solid yellow",
         borderRadius: "10px",
       }}
-    > <ToastContainer/>
+    >
+      <ToastContainer />
       <h1 className="text-3xl sm:xl text-center mt-2 underline p-8">Add Recipe</h1>
-
       <div className="w-full h-1 bg-white mt-1 mb-2"></div>
       <form
         onSubmit={handleSubmit}
@@ -103,9 +122,6 @@ const AddRecipe = () => {
           maxHeight: "560px",
           scrollbarWidth: "none",
           msOverflowStyle: "none",
-          "&::-webkit-scrollbar": {
-            display: "none",
-          },
         }}
       >
         <div className="mb-3 mt-8">
@@ -141,7 +157,7 @@ const AddRecipe = () => {
             className="form-control"
             id="qty1"
             name="qty1"
-            required
+          
             onChange={handleChange}
             value={formData.qty1}
           />
@@ -154,7 +170,7 @@ const AddRecipe = () => {
             className="form-control"
             id="qty2"
             name="qty2"
-            required
+          
             onChange={handleChange}
             value={formData.qty2}
           />
@@ -167,7 +183,7 @@ const AddRecipe = () => {
             className="form-control"
             id="qty3"
             name="qty3"
-            required
+          
             onChange={handleChange}
             value={formData.qty3}
           />
@@ -180,7 +196,7 @@ const AddRecipe = () => {
             className="form-control"
             id="qty4"
             name="qty4"
-            required
+          
             onChange={handleChange}
             value={formData.qty4}
           />
@@ -193,7 +209,7 @@ const AddRecipe = () => {
             className="form-control"
             id="ing1"
             name="ing1"
-            required
+         
             onChange={handleChange}
             value={formData.ing1}
           />
@@ -206,7 +222,7 @@ const AddRecipe = () => {
             className="form-control"
             id="ing2"
             name="ing2"
-            required
+           
             onChange={handleChange}
             value={formData.ing2}
           />
@@ -219,8 +235,8 @@ const AddRecipe = () => {
             className="form-control"
             id="ing3"
             name="ing3"
+        
             onChange={handleChange}
-            required
             value={formData.ing3}
           />
         </div>
@@ -232,8 +248,8 @@ const AddRecipe = () => {
             className="form-control"
             id="ing4"
             name="ing4"
+            
             onChange={handleChange}
-            required
             value={formData.ing4}
           />
         </div>
@@ -242,14 +258,32 @@ const AddRecipe = () => {
           <label htmlFor="imgUrl" className="form-label">Image URL</label>
           <input
             type="file"
-            className="form-control"
-            id="imgUrl"
-            name="imgUrl"
-            value={image}
+            ref={fileRef}
+            className="hidden"
+            accept="image/*"
             onChange={handleImageChange}
-            style={{display:"hidden"}}
+            
           />
-          <img src="" alt="" ref={inputRef} />
+          <img
+            src={formData.imgUrl || "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtdKXRuYUkQsxws-_KNfdKLn1jRehMKaXSmw&s" }
+            alt="recipeImage"
+            required
+            className="h-52 w-52 rounded-sm object-cover flex self-center cursor-pointer items-center"
+            onClick={() => fileRef.current.click()}
+          />
+          <p className="text-sm text-red-700 text-center font-bold">
+            {imageError ? (
+              <span className="text-red-700">
+                {"Error occurred while uploading image: " + imageError}
+              </span>
+            ) : progress > 0 && progress < 100 ? (
+              <span className="text-white">
+                {"Image uploading progress: " + progress + "%"}
+              </span>
+            ) : progress === 100 ? (
+              <span className="text-rose-800">{"Image uploaded successfully"}</span>
+            ) : null}
+          </p>
         </div>
 
         <div className="w-full h-12 flex justify-center items-center mt-5">
@@ -257,7 +291,7 @@ const AddRecipe = () => {
             type="submit"
             className="border-3 border-yellow-300 text-white px-20 py-3 rounded hover:bg-yellow-600"
           >
-            Add
+           {progress>0 && progress<100 ?"Loading":"Add"} 
           </button>
         </div>
       </form>

@@ -1,63 +1,123 @@
 import { useSelector } from "react-redux";
-import { NavLink, Link } from "react-router-dom";
-import Cookies from "js-cookie";
+import { NavLink } from "react-router-dom";
+import cookie from "cookiejs";
+import { useState } from "react";
 
 const NavBar = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const user = useSelector((state) => state.login.loginUserData);
+
   const handleLogOut = () => {
-    Cookies.remove("access_token");
+    cookie.remove("access_token");
     localStorage.removeItem("persist:root");
     window.location.href = "/";
   };
 
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
-    <div className="nav bg-dark flex justify-between p-2">
-      <div>
-        <h1 className="text-3xl text-white">Recipe Finder</h1>
+    <nav className="bg-dark p-2">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl text-white">Recipe Finder</h1>
+        </div>
+        <button
+          className="text-white sm:hidden"
+          onClick={toggleMenu}
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d={isOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16m-7 6h7"}
+            ></path>
+          </svg>
+        </button>
+        <div className="hidden sm:flex items-center space-x-4">
+          <NavLink to="/" className="btn btn-outline-secondary">
+            Home
+          </NavLink>
+
+          {!user && (
+            <>
+              <NavLink to="/register" className="btn btn-outline-info">
+                Register
+              </NavLink>
+              <NavLink to="/login" className="btn btn-outline-info">
+                Login
+              </NavLink>
+            </>
+          )}
+
+          {user && (
+            <>
+              <NavLink to="/add" className="btn btn-outline-warning">
+                Add
+              </NavLink>
+              <NavLink to="/saved" className="btn btn-outline-success">
+                Saved Recipes
+              </NavLink>
+              <NavLink to="/profile" className="btn btn-outline-primary">
+                Profile
+              </NavLink>
+              <button
+                className="btn btn-outline-danger hover:bg-red-900"
+                onClick={handleLogOut}
+              >
+                Logout
+              </button>
+            </>
+          )}
+        </div>
       </div>
-      <div className="right">
-        <NavLink to="/" className="btn btn-outline-secondary mx-2">
-          Home
-        </NavLink>
+      {isOpen && (
+        <div className="flex flex-col sm:hidden space-y-2 mt-2">
+          <NavLink to="/" className="btn btn-outline-secondary">
+            Home
+          </NavLink>
 
-        {!user && (
-          <>
-            <NavLink to="/register" className="btn btn-outline-info mx-2">
-              Register
-            </NavLink>
+          {!user && (
+            <>
+              <NavLink to="/register" className="btn btn-outline-info">
+                Register
+              </NavLink>
+              <NavLink to="/login" className="btn btn-outline-info">
+                Login
+              </NavLink>
+            </>
+          )}
 
-            <NavLink to="/login" className="btn btn-outline-info mx-2">
-              Login
-            </NavLink>
-          </>
-        )}
-
-        {user && (
-          <>
-          <NavLink
-              to="/add"
-             className="btn btn-outline-warning mx-2">
-              Add
-            </NavLink>
-
-            <NavLink to="/saved" className="btn btn-outline-success mx-2">
-              Saved Recipes
-            </NavLink>
-
-            <NavLink to="/profile" className="btn btn-outline-primary mx-2">
-              Profile
-            </NavLink>
-
-            <NavLink
-              className="btn btn-outline-danger hover:bg-red-900 mx-2"
-              onClick={handleLogOut}
-            >
-              Logout
-            </NavLink>
-          </>
-        )}
-      </div>
-    </div>
+          {user && (
+            <>
+              <NavLink to="/add" className="btn btn-outline-warning">
+                Add
+              </NavLink>
+              <NavLink to="/saved" className="btn btn-outline-success">
+                Saved Recipes
+              </NavLink>
+              <NavLink to="/profile" className="btn btn-outline-primary">
+                Profile
+              </NavLink>
+              <button
+                className="btn btn-outline-danger hover:bg-red-900"
+                onClick={handleLogOut}
+              >
+                Logout
+              </button>
+            </>
+          )}
+        </div>
+      )}
+    </nav>
   );
 };
 

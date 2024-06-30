@@ -10,12 +10,12 @@ import {
   loginRequest,
 } from "../redux/action/action.js";
 import { useNavigate } from "react-router-dom";
-import toastify from "../toast/toastify.js";
-
+import toastify from "../toast/toastify.js"
 const Login = () => {
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
+
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,8 +39,9 @@ const Login = () => {
           withCredentials: true,
         }
       );
-      toastify("Login SuccessFully !");
+      toastify(response.data.message);
       dispatch(loginSuccess());
+      //console.log(response.data.data);
       dispatch(loginUserData(response.data.data));
      setTimeout(()=>{navigate("/");},1500) ;
       setEmail("");

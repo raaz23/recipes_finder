@@ -7,6 +7,7 @@ import Saved from "./components/Saved";
 import Profile from "./components/Profile";
 import AddRecipe from "./components/AddRecipe";
 import Private from "./components/Private";
+import Detail from "./components/Detail";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/saved" element={<Saved />} />
           <Route path="/add" element={<AddRecipe />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/detail/:id" element={<Detail/>} />
         </Route>
       </Routes>
     </BrowserRouter>

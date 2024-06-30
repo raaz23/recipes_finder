@@ -38,7 +38,7 @@ const SignUp = () => {
       );
       toastify("Register Successfully !");
       dispatch(loginSuccess());
-      dispatch(loginUserData(response.data.data));
+      dispatch(loginUserData(response.data.newUser));
       setTimeout(()=>{navigate("/");},1500) ;
 
       setName("");
@@ -46,7 +46,7 @@ const SignUp = () => {
       setPassword("");
     } catch (err) {
       dispatch(loginFailure(err.message));
-      toastify("Invalid email or password !");
+      toastify("Internal server error !");
     }
   };
 
