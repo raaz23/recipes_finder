@@ -69,7 +69,7 @@ const Profile = () => {
       dispatch(updateRequest());
 
       const res = await axios.post(
-        `http://localhost:3000/api/update/${currUser._id}`,
+        `${window.location.origin}/api/update/${currUser._id}`,
         formData,
         {
           headers: {
@@ -98,7 +98,7 @@ const Profile = () => {
     const id=currUser._id;
     try {
       const res = await axios.delete(
-        `http://localhost:3000/api/delete/${id}`,
+        `${window.location.origin}/api/delete/${id}`,
         {
           withCredentials: true,
         }

@@ -15,7 +15,7 @@ const Detail = () => {
 
   const handleViewRecipe = async (recipeId) => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/${recipeId}`);
+      const response = await axios.get(`${window.location.origin}/api/${recipeId}`);
       setData(response.data.data);
     } catch (error) {
       toastify("Error fetching recipes");

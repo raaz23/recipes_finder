@@ -17,7 +17,7 @@ const Home = () => {
 
   const fetchRecipes = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/all");
+      const response = await axios.get(`${window.location.origin}/api/all`);
       setRecipes(response.data.data);
     } catch (error) {
      // console.error("Error fetching recipes:", error);
@@ -41,7 +41,7 @@ const Home = () => {
   const handleSaveRecipe = async (recipeId) => {
     console.log(recipeId);
     try {
-      const response=await axios.post(`http://localhost:3000/api/save/${recipeId}`,
+      const response=await axios.post(`${window.location.origin}/api/save/${recipeId}`,
         {
           withCredentials: true,
         }
@@ -69,7 +69,7 @@ const Home = () => {
         
         <ToastContainer/>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {recipes.map((recipe, index) => (
+          {recipes && recipes.map((recipe, index) => (
             <div key={index} className="group block rounded-xl overflow-hidden shadow-xl hover:shadow-2xl transition duration-300">
               
                 <img

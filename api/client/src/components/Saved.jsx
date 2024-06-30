@@ -14,7 +14,7 @@ const SavedRecipes = () => {
 
   const fetchSavedRecipes = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/api/getSavedRecipe", {
+      const response = await axios.get(`${window.location.origin}/api/getSavedRecipe`, {
         withCredentials: true,
       });
      // console.log(response.data.data);
@@ -38,7 +38,7 @@ const SavedRecipes = () => {
   const handleDeleteRecipe = async (recipeId) => {
     //console.log(`Delete recipe with ID: ${recipeId}`);
     try {
-      const response=await axios.delete(`http://localhost:3000/api/deleteSavedRecipe/${recipeId}`, {
+      const response=await axios.delete(`${window.location.origin}/api/deleteSavedRecipe/${recipeId}`, {
         withCredentials: true,
       });
       toastify(response.data.message);
@@ -55,7 +55,7 @@ const SavedRecipes = () => {
 <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">Saved Recipes</h1>
         <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3">
         
-          {savedRecipes.map((savedRecipe, index) => (
+          {savedRecipes && savedRecipes.map((savedRecipe, index) => (
             <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col items-center">
               <img
                 src={savedRecipe.imgUrl || ""}

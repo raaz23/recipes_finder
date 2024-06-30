@@ -27,7 +27,7 @@ const SignUp = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/register",
+        `${window.location.origin}/api/register`,
         { name, email, password },
         {
           headers: {

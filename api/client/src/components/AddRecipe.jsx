@@ -64,7 +64,7 @@ const AddRecipe = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("http://localhost:3000/api/add", formData, {
+      const response = await axios.post(`${window.location.origin}/api/add`, formData, {
         headers: {
           "Content-Type": "application/json",
         },
