@@ -14,7 +14,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 const Profile = () => {
   const currUser = useSelector((state) => state.login.loginUserData);
-  console.log(currUser);
+ // console.log(currUser);
   const fileRef = useRef();
   const dispatch = useDispatch();
 
@@ -94,7 +94,7 @@ const Profile = () => {
   };
 
   const handleDelete = async () => {
-    console.log(currUser._id);
+   // console.log(currUser._id);
     const id=currUser._id;
     try {
       const res = await axios.delete(
@@ -116,7 +116,7 @@ const Profile = () => {
       dispatch(updateFailure(error));
     }
   };
-  
+
   if (!currUser) {
     return <div>Loading...</div>;
   }

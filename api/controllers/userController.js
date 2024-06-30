@@ -124,7 +124,7 @@ export const updateUser = async (req, res, next) => {
 
 
 export const deleteUser = async (req, res, next) => {
-  console.log(req.user.id, req.params.id);
+  //console.log(req.user.id, req.params.id);
   if (req.user.id !== req.params.id)
     return res
       .status(403)

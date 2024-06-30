@@ -17,26 +17,26 @@ const SavedRecipes = () => {
       const response = await axios.get("http://localhost:3000/api/getSavedRecipe", {
         withCredentials: true,
       });
-      console.log(response.data.data);
+     // console.log(response.data.data);
       setSavedRecipes(response.data.data);
       
      
     } catch (error) {
-      console.error("Error fetching saved recipes:", error);
+      //console.error("Error fetching saved recipes:", error);
     }
   };
 
   const handleViewRecipe = (recipeId) => {
-    console.log(`View recipe with ID: ${recipeId}`);
+    //console.log(`View recipe with ID: ${recipeId}`);
     try {
       navigate(`/detail/${recipeId}`);
     } catch (error) {
-      console.error("Error fetching recipes:", error);
+      //console.error("Error fetching recipes:", error);
     }
   };
 
   const handleDeleteRecipe = async (recipeId) => {
-    console.log(`Delete recipe with ID: ${recipeId}`);
+    //console.log(`Delete recipe with ID: ${recipeId}`);
     try {
       const response=await axios.delete(`http://localhost:3000/api/deleteSavedRecipe/${recipeId}`, {
         withCredentials: true,
@@ -45,7 +45,7 @@ const SavedRecipes = () => {
       setSavedRecipes((prevRecipes) => prevRecipes.filter(recipe => recipe._id !== recipeId));
        
     } catch (error) {
-      console.error("Error deleting recipe:", error);
+      //console.error("Error deleting recipe:", error);
     }
   };
 
