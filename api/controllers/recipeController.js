@@ -5,8 +5,6 @@ import mongoose from "mongoose";
 
 // Create a new recipe
 export const createRecipe = async (req, res) => {
- // console.log(req.user.id)
-  //if(!req.user.id) {return res.status(402).json({message:"you are not authenticate to create ! please login first"}) }
   
   const {
     title,
@@ -84,12 +82,16 @@ export const getRecipeById = async (req, res) => {
 
 // Delete recipe by ID
 export const deleteRecipeById = async (req, res) => {
- 
+    
   try {
-    const deletedRecipe = await savedRecipeModel.findOneAndDelete({saveRecipeId:req.params.id});
-    if (!deletedRecipe) {
-      return res.status(404).json({ msg: "Recipe not found" });
+    if(req.user.id!==req.params.user) return res.status(404).json({message:"you are not authorized to delete this saved recipe"});
+    const user = await savedRecipeModel.findOne({user:req.params.user});
+    if (!user) {
+      return res.status(404).json({ msg: "user does not have saved recipe" });
     }
+    const deleteSavedRecipe= await savedRecipeModel.findOneAndUpdate({user:req.params.user},{
+      $pull: { saveRecipeId: req.params.id }
+    },{new:true});
     res
       .status(200)
       .json({ message: "Recipe deleted successfully"});
@@ -101,46 +103,60 @@ export const deleteRecipeById = async (req, res) => {
 
 
 export const savedRecipeById = async (req, res) => {
+  const { id1, id2 } = req.params;
+  console.log(id1,id2);
 
   try {
-    // Find the recipe
-    const recipe = await recipeModel.findById(req.params.id);
-    console.log(recipe);
-
-    // Check if the recipe exists
-    if (!recipe) {
-      return res.status(404).json({ message: "Recipe not found" });
+    if (req.user.id !== id1) {
+      return res.status(403).json({ message: "Not authorized to save recipe" });
     }
 
-    // Check if the recipe is already saved
-    const existingSavedRecipe = await savedRecipeModel.findOne({ saveRecipeId: req.params.id});
+   
+    const user = await userModel.findById(id1); 
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const existingSavedRecipe = await savedRecipeModel.findOne({
+      user: id1,
+      saveRecipeId: id2,
+    });
+
     if (existingSavedRecipe) {
       return res.json({ message: "Recipe already saved" });
     }
 
-    // Save the recipe
-    const recipeSaved = new savedRecipeModel({ saveRecipeId: req.params.id });
-    await recipeSaved.save();
+    
+    const updatedRecipe = await savedRecipeModel.findOneAndUpdate(
+      { user: id1 },
+      { $push: { saveRecipeId: id2 } }, 
+      { new: true, upsert: true } 
+    );
 
-    res.json({ message: "Recipe saved successfully" });
+
+    res.json({ message: 'Recipe saved successfully', data: updatedRecipe });
   } catch (error) {
-    //console.error(error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error(error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
-
-
 export const getAllSavedRecipe = async (req, res) => {
-  const recipe = await savedRecipeModel.find();
+  const id=req.params.id;
+  console.log(id, req.user.id);
+  if(req.user.id!==id) return res.status(404).json({message:"not Authorized"});
+  const recipe = await savedRecipeModel.findOne({user:id});
   if (!recipe)
-    res.status(402).json({ status: 0, message: "not found any recipe" });
+   return res.status(402).json({ status: 0, message: "not found any saved recipe on this id" });
 
-  const allRecipe=await Promise.all(recipe.map(async(each)=>{
-    const recipe=await recipeModel.findById(each.saveRecipeId);
+  if(recipe.saveRecipeId.length<=0) return res.status(202).json({message:"zero recipe saved"});
+  const allRecipe=await Promise.all(recipe.saveRecipeId.map(async(each)=>{
+    const recipe=await recipeModel.findById(each);
     return recipe;
   }));
 
+    console.log(allRecipe);
   res
     .status(201)
     .json({ status: 1, message: "successfully fetched saved recipe", data:allRecipe });

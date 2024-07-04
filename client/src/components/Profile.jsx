@@ -3,18 +3,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { storage } from "../utils/firebase.js";
 import {
-  updateFailure,
-  updateRequest,
-  updateSuccess,
+  loginFailure,
+  loginRequest,
+  loginUserData,
 } from "../redux/action/action";
 import axios from "axios";
 import toastify from "../toast/toastify.js";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import config from "../../config.js";
 
 const Profile = () => {
   const currUser = useSelector((state) => state.login.loginUserData);
- // console.log(currUser);
+  console.log(currUser);
   const fileRef = useRef();
   const dispatch = useDispatch();
 
@@ -66,11 +67,12 @@ const Profile = () => {
     
 
     try {
-      dispatch(updateRequest());
+      dispatch(loginRequest());
+      console.log(currUser._id);
 
       const res = await axios.post(
-        `${window.location.origin}/api/update/${currUser._id}`,
-        formData,
+        `${config.BASE_URL}/api/update/${currUser._id}`,
+         formData,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -79,26 +81,23 @@ const Profile = () => {
         }
         
       );
-
-      if (res.data) {
+      console.log(res.data.data);
         toastify(res.data.message);
-        dispatch(updateSuccess(res.data.data));
-      } else {
-        toastify("Update failed");
-        dispatch(updateFailure(new Error("Update failed")));
-      }
+        dispatch(loginUserData(res.data.data));
+
     } catch (error) {
       toastify("Error in updating account");
-      dispatch(updateFailure(error));
+      dispatch(loginFailure(error));
     }
   };
 
+  
   const handleDelete = async () => {
    // console.log(currUser._id);
     const id=currUser._id;
     try {
       const res = await axios.delete(
-        `${window.location.origin}/api/delete/${id}`,
+        `${config.BASE_URL}/api/delete/${id}`,
         {
           withCredentials: true,
         }
@@ -106,14 +105,15 @@ const Profile = () => {
   
       if (res.data) {
         toastify(res.data.message);
-        dispatch(updateSuccess(null));
+        dispatch(loginUserData(""));
+
       } else {
         toastify('Deletion failed');
-        dispatch(updateFailure(new Error('Deletion failed')));
+        dispatch(loginFailure("Deletion failed"));
       }
     } catch (error) {
       toastify("Can't delete this user account. Please contact the support team!");
-      dispatch(updateFailure(error));
+      dispatch(loginFailure(error.message));
     }
   };
 
@@ -177,9 +177,9 @@ const Profile = () => {
           className="text-center text-black"
           onChange={handleChanges}
         />
-        <button type="submit" className="p-2 bg-sky-800">
-        {progress>0 && progress<100 ?"Loading":"Update"} 
-        </button>
+        <button type="submit" className="p-2 bg-sky-800" disabled={progress > 0 && progress < 100}>
+  {progress > 0 && progress < 100 ? "Loading..." : "Update"}
+</button>
       </form>
 
       <div className="flex justify-between">

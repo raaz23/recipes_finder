@@ -3,8 +3,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toastify from "../toast/toastify";
 import { ToastContainer } from "react-toastify";
+import config from "../../config";
+import { useSelector } from "react-redux";
 
 const SavedRecipes = () => {
+  const user = useSelector((state) => state.login.loginUserData);
   const [savedRecipes, setSavedRecipes] = useState([]);
   const navigate = useNavigate();
  
@@ -14,10 +17,10 @@ const SavedRecipes = () => {
 
   const fetchSavedRecipes = async () => {
     try {
-      const response = await axios.get(`${window.location.origin}/api/getSavedRecipe`, {
+      const response = await axios.get(`${config.BASE_URL}/api/getSavedRecipe/${user._id}`, {
         withCredentials: true,
       });
-     // console.log(response.data.data);
+    //  console.log(response.data.data);
       setSavedRecipes(response.data.data);
       
      
@@ -38,7 +41,7 @@ const SavedRecipes = () => {
   const handleDeleteRecipe = async (recipeId) => {
     //console.log(`Delete recipe with ID: ${recipeId}`);
     try {
-      const response=await axios.delete(`${window.location.origin}/api/deleteSavedRecipe/${recipeId}`, {
+      const response=await axios.post(`${config.BASE_URL}/api/deleteSavedRecipe/${user._id}/${recipeId}`,{}, {
         withCredentials: true,
       });
       toastify(response.data.message);
@@ -53,7 +56,7 @@ const SavedRecipes = () => {
     <div className="min-h-screen bg-green-600 py-10"> <ToastContainer/>
       <div className="max-w-screen-xl mx-auto px-4">
 <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">Saved Recipes</h1>
-        <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-3">
+        <div className="grid gap-8 sm:grid-cols-1 lg:grid-cols-3">
         
           {savedRecipes && savedRecipes.map((savedRecipe, index) => (
             <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col items-center">

@@ -6,8 +6,11 @@ import { useNavigate } from "react-router";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import the CSS for Toastify
 import {storage} from "../utils/firebase.js";
+import config from "../../config.js";
+
 
 const AddRecipe = () => {
+
   const navigate = useNavigate();
   const fileRef = useRef();
   
@@ -64,7 +67,7 @@ const AddRecipe = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`${window.location.origin}/api/add`, formData, {
+      const response = await axios.post(`${config.BASE_URL}/api/add`, formData, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -151,7 +154,7 @@ const AddRecipe = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="qty1" className="form-label">Quantity 1</label>
+          <label htmlFor="qty1" className="form-label">Ingredient 1</label>
           <input
             type="text"
             className="form-control"
@@ -164,7 +167,7 @@ const AddRecipe = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="qty2" className="form-label">Quantity 2</label>
+          <label htmlFor="qty2" className="form-label">Ingredient 2</label>
           <input
             type="text"
             className="form-control"
@@ -177,7 +180,7 @@ const AddRecipe = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="qty3" className="form-label">Quantity 3</label>
+          <label htmlFor="qty3" className="form-label">Ingredient 3</label>
           <input
             type="text"
             className="form-control"
@@ -190,7 +193,7 @@ const AddRecipe = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="qty4" className="form-label">Quantity 4</label>
+          <label htmlFor="qty4" className="form-label">Ingredient 4</label>
           <input
             type="text"
             className="form-control"
@@ -203,7 +206,7 @@ const AddRecipe = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="ing1" className="form-label">Ingredient 1</label>
+          <label htmlFor="ing1" className="form-label">Ingredient 5</label>
           <input
             type="text"
             className="form-control"
@@ -216,7 +219,7 @@ const AddRecipe = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="ing2" className="form-label">Ingredient 2</label>
+          <label htmlFor="ing2" className="form-label">Ingredient 6</label>
           <input
             type="text"
             className="form-control"
@@ -229,7 +232,7 @@ const AddRecipe = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="ing3" className="form-label">Ingredient 3</label>
+          <label htmlFor="ing3" className="form-label">Ingredient 7</label>
           <input
             type="text"
             className="form-control"
@@ -242,7 +245,7 @@ const AddRecipe = () => {
         </div>
 
         <div className="mb-3">
-          <label htmlFor="ing4" className="form-label">Ingredient 4</label>
+          <label htmlFor="ing4" className="form-label">Ingredient 8</label>
           <input
             type="text"
             className="form-control"

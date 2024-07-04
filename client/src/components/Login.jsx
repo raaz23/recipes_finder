@@ -11,6 +11,7 @@ import {
 } from "../redux/action/action.js";
 import { useNavigate } from "react-router-dom";
 import toastify from "../toast/toastify.js"
+import config from "../../config.js";
 const Login = () => {
   const dispatch = useDispatch();
 
@@ -27,7 +28,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        `${window.location.origin}/api/login`,
+        `${config.BASE_URL}/api/login`,
         {
           email,
           password,

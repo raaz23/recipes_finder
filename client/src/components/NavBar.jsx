@@ -10,7 +10,7 @@ const NavBar = () => {
   const handleLogOut = () => {
     cookie.remove("access_token");
     localStorage.removeItem("persist:root");
-    window.location.href = "/";
+    window.location.href = "/login";
   };
 
   const toggleMenu = () => {

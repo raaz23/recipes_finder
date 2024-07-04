@@ -3,13 +3,11 @@ import { createRecipe, deleteRecipeById, getAllRecipes, getAllSavedRecipe, getRe
 import verifyJWT from "../utils/verifyJWT.js";
 const router=express.Router();
 
-router.post("/add", createRecipe);
+router.post("/add",createRecipe);
 router.get("/all", getAllRecipes);
-router.get("/getSavedRecipe", getAllSavedRecipe);
+router.get("/getSavedRecipe/:id",verifyJWT,getAllSavedRecipe);
 router.get("/:id", getRecipeById);
-router.delete("/deleteSavedRecipe/:id", deleteRecipeById);
-router.post("/save/:id",savedRecipeById);
-
-
+router.post("/deleteSavedRecipe/:user/:recipeId",verifyJWT, deleteRecipeById);
+router.post("/save/:id1/:id2", verifyJWT, savedRecipeById);
 
 export default router;

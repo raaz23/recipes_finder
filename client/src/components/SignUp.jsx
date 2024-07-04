@@ -11,8 +11,10 @@ import {
 } from "../redux/action/action.js";
 import { useNavigate } from "react-router-dom";
 import toastify from "../toast/toastify.js";
+import config from "../../config.js";
 
 const SignUp = () => {
+
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
@@ -24,10 +26,10 @@ const SignUp = () => {
     e.preventDefault();
 
     dispatch(loginRequest());
-
+    let response;
     try {
-      const response = await axios.post(
-        `${window.location.origin}/api/register`,
+       response = await axios.post(
+        `${config.BASE_URL}/api/register`,
         { name, email, password },
         {
           headers: {
@@ -36,7 +38,8 @@ const SignUp = () => {
           withCredentials: true,
         }
       );
-      toastify("Register Successfully !");
+      //console.log(response.data);
+      toastify(response.data.message);
       dispatch(loginSuccess());
       dispatch(loginUserData(response.data.newUser));
       setTimeout(()=>{navigate("/");},1500) ;
@@ -46,7 +49,7 @@ const SignUp = () => {
       setPassword("");
     } catch (err) {
       dispatch(loginFailure(err.message));
-      toastify("Internal server error !");
+      toastify("All fields required and password must be 6 character");
     }
   };
 

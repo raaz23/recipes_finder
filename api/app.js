@@ -7,12 +7,11 @@ import cookieParser from "cookie-parser";
 
 import userRouter from "./routers/userRouter.js";
 import recipeRouter from "./routers/recipeRouter.js";
-import { fileURLToPath } from "url";
-import  fs from "fs"
+
 
 
 const app = express();
-const __dirname = dirname(fileURLToPath(import.meta.url));
+
 
 // Middleware
 
@@ -23,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
-    origin: true,
+    origin:true,
     credentials: true,
   })
 );
@@ -31,8 +30,6 @@ app.use(
 // Database connection
 mongoose
   .connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
     dbName: "receipy",
   })
   .then(() => {
@@ -46,12 +43,14 @@ mongoose
 app.use("/api", userRouter);
 app.use("/api", recipeRouter);
 
-app.use(express.static(path.resolve(__dirname,'client', 'dist')));
+//yeh sare frontend k liye hai
 
+/*app.use(express.static(path.resolve(__dirname,'client', 'dist')));
+const __dirname = dirname(fileURLToPath(import.meta.url));
 // Handle all other routes by serving the index.html file
 app.get('*', (req, res) => {
   res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'));
-});
+});*/
 
 // Handle undefined routes
 app.get("*", (req, res) => {
