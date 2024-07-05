@@ -1,31 +1,31 @@
 # MERN Stack Recipe Finder Web Application
 
 This is a mern-stack web application built with (MongoDB, Express, React, Node.js).
-you can check out my website by clicking on https://glittery-kangaroo-991156.netlify.app (it is slow because of free hosted so please be patience)
+you can check out my website by clicking on [website link](https://glittery-kangaroo-991156.netlify.app) (it is slow because of free hosted so please be patient)
 
 ## Features 
 
 - **Authentication:** Sign up, log in, log out, update profile, create recipe, save the fav recipe, view the saved recipe
-- **Guest User:** only view the total recipe in home page
+- **Guest User:** Only view the total recipe on the home page
 - **Protected Routes:** Access to protected routes only for authenticated users.
 
 ## Technologies Used
 
-- **Front-end:** React, Redux, redux-persist, BoostTrap and tailwind css.
+- **Front-end:** React, Redux, Redux-persist, BoostTrap and Tailwind CSS.
 - **Back-end:** Node.js, Express.
-- **Database:** MongoDB and firebase.
+- **Database:** MongoDB and Firebase.
 - **Authentication:** JSON Web Tokens (JWT).
 
 ## Fully Hosted
 
-- **Front-end:** render
-- **Back-end:** netlify
+- **Front-end:** netlify
+- **Back-end:** render
 
 ## Getting Started
 
 1. Clone the repository.
 2. Install dependencies using `npm install` in both the `client` and `api` directories.
-3. Set up your MongoDB database and update the configuration in the server.
+3. Set up your MongoDB database and update the configuration on the server.
 4. Run the application using `npm start` in both the `client` and `server` directories.
 
 ## Author
